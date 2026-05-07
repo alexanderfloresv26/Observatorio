@@ -1,7 +1,18 @@
 package Observatorio;
 
+import Excepciones.ExcepcionDeLatitudInvalida;
+import Excepciones.ExcepcionDeLongitudInvalida;
+import Excepciones.ExcepciondeMesInvalido;
+import Excepciones.Mes;
+
 import java.util.Comparator;
 import java.util.Objects;
+
+/*
+Reglas de las posiciones:
+1) Los grados no pueden ser mayores a 180
+2) Los meses deben ser validos
+*/
 
 public class Posicion implements Comparable <Posicion>{
     private String periodoEnLaUbicacion;
@@ -16,15 +27,32 @@ public class Posicion implements Comparable <Posicion>{
         }
     };
 
-    public Posicion(String periodoEnLaUbicacion, double longitud, double latitud, double distanciaDeLaTierra, CuerpoCeleste cuerpoCeleste) {
+    public Posicion(String periodoEnLaUbicacion, double longitud, double latitud, double distanciaDeLaTierra, CuerpoCeleste cuerpoCeleste)
+            throws ExcepcionDeLatitudInvalida, ExcepcionDeLongitudInvalida, ExcepciondeMesInvalido {
         this.periodoEnLaUbicacion = periodoEnLaUbicacion;
         this.longitud = longitud;
         this.latitud = latitud;
         this.distanciaDeLaTierra = distanciaDeLaTierra;
         this.cuerpoCeleste = cuerpoCeleste;
 
+        verificacionPosicion();
         cuerpoCeleste.agregarPosicion(this);
+
     }
+
+    public void verificacionPosicion() throws
+            ExcepcionDeLatitudInvalida, ExcepcionDeLongitudInvalida,  ExcepciondeMesInvalido {
+        if (latitud < -180 || latitud > 180)
+            throw new ExcepcionDeLatitudInvalida("La latitud debe estar entre -180 y 180 grados");
+        if (longitud > 180 || longitud < -180)
+            throw new ExcepcionDeLongitudInvalida("La longitud debe estar entre -180 y 180 grados");
+        try {
+            Mes.valueOf(periodoEnLaUbicacion.toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            throw new ExcepciondeMesInvalido("No existe ese mes");
+        }
+    }
+
 
     public double getLatitud()
     {
