@@ -3,7 +3,6 @@ package Observatorio;
 import Excepciones.ExcepcionDeLatitudInvalida;
 import Excepciones.ExcepcionDeLongitudInvalida;
 import Excepciones.ExcepciondeMesInvalido;
-import Excepciones.Mes;
 
 import java.util.Comparator;
 import java.util.Objects;
@@ -20,6 +19,8 @@ public class Posicion implements Comparable <Posicion>{
     private double latitud;
     private double distanciaDeLaTierra;
     private CuerpoCeleste cuerpoCeleste;
+    private static final String[] MESES = {"ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO",
+            "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"};
 
     private static Comparator<Posicion> c = new Comparator<Posicion>() {
         public int compare(Posicion o1, Posicion o2) {
@@ -42,15 +43,22 @@ public class Posicion implements Comparable <Posicion>{
 
     public void verificacionPosicion() throws
             ExcepcionDeLatitudInvalida, ExcepcionDeLongitudInvalida,  ExcepciondeMesInvalido {
+        int a=0; boolean encontrado=false;
         if (latitud < -180 || latitud > 180)
             throw new ExcepcionDeLatitudInvalida("La latitud debe estar entre -180 y 180 grados");
         if (longitud > 180 || longitud < -180)
             throw new ExcepcionDeLongitudInvalida("La longitud debe estar entre -180 y 180 grados");
-        try {
-            Mes.valueOf(periodoEnLaUbicacion.toUpperCase());
-        } catch (IllegalArgumentException ex) {
-            throw new ExcepciondeMesInvalido("No existe ese mes");
+        while (a< MESES.length){
+            if (MESES[a].equals(periodoEnLaUbicacion.toUpperCase())){
+                encontrado=true;
+                break;
+            }
+            a++;
         }
+        if (!encontrado){
+            throw new ExcepciondeMesInvalido("El mes no existe");
+        }
+
     }
 
 
